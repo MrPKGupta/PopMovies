@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Pop Movies</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_detail_activity">Movie Detail</string>
+
+    <!--API callbacks -->
+    <string name="poster_base_url">http://image.tmdb.org/t/p/w185</string>
+    <string name="movie_base_url">http://api.themoviedb.org/3/movie/</string>
+    <string name="popular_url_query">popular?</string>
+    <string name="rating_url_query">top_rated?</string>
+    <string name="api_key">1e9ccb51d92ab487d363bd3c8d04f016</string>
+
+    <string name="menu_sort_popularity">Sort by popularity</string>
+    <string name="menu_sort_rating">Sort by rating</string>
+
+</resources>

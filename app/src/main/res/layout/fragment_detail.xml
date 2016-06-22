@@ -1,0 +1,73 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context="addtotech.com.popmovies.DetailFragment">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/title_margin_bottom"
+            android:background="@color/color_title_text"
+            android:paddingBottom="@dimen/title_padding_bottom"
+            android:paddingLeft="@dimen/fragment_detail_padding_left"
+            android:paddingRight="@dimen/fragment_detail_padding_right"
+            android:paddingTop="@dimen/title_padding_top"
+            android:textColor="@color/color_title_font"
+            android:textSize="@dimen/title_text_size"
+            tools:text="Movie Title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/fragment_detail_padding_left"
+            android:paddingRight="@dimen/fragment_detail_padding_right">
+
+            <ImageView
+                android:id="@+id/imageViewThumbNail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:src="@drawable/movie" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/fragment_detail_padding_left">
+
+                <TextView
+                    android:id="@+id/tvReleaseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    tools:text="2015" />
+
+                <TextView
+                    android:id="@+id/tvUserRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/fragment_detail_padding_top"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    tools:text="8.0/10.0" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSynopsis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/fragment_detail_padding_left"
+            android:paddingRight="@dimen/fragment_detail_padding_right"
+            android:paddingTop="@dimen/fragment_detail_padding_top"
+            tools:text="synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg" />
+    </LinearLayout>
+</ScrollView>
