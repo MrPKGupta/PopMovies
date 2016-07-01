@@ -8,9 +8,10 @@
     <string name="movie_base_url">http://api.themoviedb.org/3/movie/</string>
     <string name="popular_url_query">popular?</string>
     <string name="rating_url_query">top_rated?</string>
-    <string name="api_key">1e9ccb51d92ab487d363bd3c8d04f016</string>
 
     <string name="menu_sort_popularity">Sort by popularity</string>
     <string name="menu_sort_rating">Sort by rating</string>
+    <string name="no_network">No internet connection</string>
+    <string name="action_retry">Retry</string>
 
 </resources>

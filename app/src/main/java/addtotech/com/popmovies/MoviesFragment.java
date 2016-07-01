@@ -2,11 +2,14 @@ package addtotech.com.popmovies;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +45,7 @@ public class MoviesFragment extends Fragment {
     private ArrayList<String> imageUrlList = new ArrayList<>();
     ListAdapter listAdapter;
     private GridView gridView;
+    private String sortQuery;
 
     OnMovieSelectedListener onMovieSelectedListener = null;
 
@@ -65,7 +69,7 @@ public class MoviesFragment extends Fragment {
 
         //Load the movies by popularity or rating
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
+        sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
         fetchTask = new fetchImageTask();
         fetchTask.execute(sortQuery);
 
@@ -128,10 +132,15 @@ public class MoviesFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(!isNetworkAvailable()) {
+                showSnackBar();
+                cancel(true);
+            }
         }
 
         @Override
         protected String doInBackground(String... strings) {
+            Log.d(LOG_TAG, "inbackground called");
             HttpURLConnection httpURLConnection = null;
             BufferedReader reader = null;
             String api_key = getString(R.string.api_key);
@@ -188,6 +197,8 @@ public class MoviesFragment extends Fragment {
         @Override
         protected void onPostExecute(String string) {
             //Getting the list of image urls to be passed to the list adapter
+            if(string == null || string.isEmpty())
+                return;
             imageUrlList.clear();
             try {
                 JSONObject jsonObject = new JSONObject(string);
@@ -232,7 +243,6 @@ public class MoviesFragment extends Fragment {
         int id = item.getItemId();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String sortQuery;
         if(id == R.id.sortByPopularity) {
             sortQuery = getString(R.string.popular_url_query);
             new fetchImageTask().execute(sortQuery);
@@ -254,5 +264,25 @@ public class MoviesFragment extends Fragment {
 
     public interface OnMovieSelectedListener {
         void onMovieSelected(String movie);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+    private void showSnackBar() {
+        Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_network, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.action_retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new fetchImageTask().execute(sortQuery);
+                    }
+                })
+                .show();
     }
 }
