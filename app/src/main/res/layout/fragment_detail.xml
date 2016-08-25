@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/layoutDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -57,6 +58,11 @@
                     android:paddingTop="@dimen/fragment_detail_padding_top"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     tools:text="8.0/10.0" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/fragment_detail_padding_top"
+                    android:src="@android:drawable/btn_star"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -69,5 +75,14 @@
             android:paddingRight="@dimen/fragment_detail_padding_right"
             android:paddingTop="@dimen/fragment_detail_padding_top"
             tools:text="synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg" />
+
+        <LinearLayout
+            android:id="@+id/bottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/fragment_detail_padding_left"
+            android:paddingRight="@dimen/fragment_detail_padding_right"
+            android:orientation="vertical">
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/fragment_detail_padding_bottom">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageViewThumbNail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="156dp"
+            android:minHeight="117dp"
+            android:src="@drawable/trailer"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@android:drawable/ic_media_play"/>
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/tvTrailerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_gravity="center_vertical"
+        tools:text="Trailer 1"/>
+</LinearLayout>

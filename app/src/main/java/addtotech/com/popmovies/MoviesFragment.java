@@ -2,8 +2,6 @@ package addtotech.com.popmovies;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,10 +38,10 @@ import java.util.ArrayList;
  */
 public class MoviesFragment extends Fragment {
     private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
-    private fetchImageTask fetchTask = null;
+    private FetchImageTask fetchTask = null;
     private JSONArray results;
     private ArrayList<String> imageUrlList = new ArrayList<>();
-    ListAdapter listAdapter;
+    MovieListAdapter movieListAdapter;
     private GridView gridView;
     private String sortQuery;
 
@@ -55,7 +53,7 @@ public class MoviesFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listAdapter = new ListAdapter(getActivity(), imageUrlList);
+        movieListAdapter = new MovieListAdapter(getActivity(), imageUrlList);
         setHasOptionsMenu(true);
     }
 
@@ -65,12 +63,12 @@ public class MoviesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView)view.findViewById(R.id.gridMovie);
 
-        gridView.setAdapter(listAdapter);
+        gridView.setAdapter(movieListAdapter);
 
         //Load the movies by popularity or rating
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
-        fetchTask = new fetchImageTask();
+        fetchTask = new FetchImageTask();
         fetchTask.execute(sortQuery);
 
         return view;
@@ -127,12 +125,12 @@ public class MoviesFragment extends Fragment {
         onMovieSelectedListener = listener;
     }
 
-    private class fetchImageTask extends AsyncTask<String, String, String> {
+    private class FetchImageTask extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(!isNetworkAvailable()) {
+            if(!Utils.isNetworkAvailable(getContext())) {
                 showSnackBar();
                 cancel(true);
             }
@@ -210,10 +208,10 @@ public class MoviesFragment extends Fragment {
                 }
 
                 //Setting list adapter to gridView
-                listAdapter.notifyDataSetChanged();
+                movieListAdapter.notifyDataSetChanged();
 
                 if(getResources().getBoolean(R.bool.has_two_panes) && !imageUrlList.isEmpty()) {
-                    gridView.performItemClick(listAdapter.getView(0, null, null), 0, listAdapter.getItemId(0));
+                    gridView.performItemClick(movieListAdapter.getView(0, null, null), 0, movieListAdapter.getItemId(0));
                 }
 
             } catch (JSONException e) {
@@ -245,7 +243,7 @@ public class MoviesFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if(id == R.id.sortByPopularity) {
             sortQuery = getString(R.string.popular_url_query);
-            new fetchImageTask().execute(sortQuery);
+            new FetchImageTask().execute(sortQuery);
             editor.putString(MainActivity.SORT_QUERY, sortQuery);
             editor.apply();
             getActivity().supportInvalidateOptionsMenu();
@@ -253,7 +251,7 @@ public class MoviesFragment extends Fragment {
         }
         if(id == R.id.sortByRating) {
             sortQuery = getString(R.string.rating_url_query);
-            new fetchImageTask().execute(sortQuery);
+            new FetchImageTask().execute(sortQuery);
             editor.putString(MainActivity.SORT_QUERY, sortQuery);
             editor.apply();
             getActivity().supportInvalidateOptionsMenu();
@@ -266,21 +264,12 @@ public class MoviesFragment extends Fragment {
         void onMovieSelected(String movie);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        return false;
-    }
     private void showSnackBar() {
         Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_network, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.action_retry, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new fetchImageTask().execute(sortQuery);
+                        new FetchImageTask().execute(sortQuery);
                     }
                 })
                 .show();

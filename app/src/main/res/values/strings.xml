@@ -6,12 +6,19 @@
     <!--API callbacks -->
     <string name="poster_base_url">http://image.tmdb.org/t/p/w185</string>
     <string name="movie_base_url">http://api.themoviedb.org/3/movie/</string>
+    <string name="youtube_base_url">https://www.youtube.com/watch?v=</string>
+    <string name="trailer_thumbnail_base_url">http://img.youtube.com/vi/</string>
+    <string name="trailer_thumbnail_query">/default.jpg</string>
     <string name="popular_url_query">popular?</string>
     <string name="rating_url_query">top_rated?</string>
+    <string name="review_url_query">/reviews?</string>
+    <string name="trailer_url_query">/videos?</string>
 
     <string name="menu_sort_popularity">Sort by popularity</string>
     <string name="menu_sort_rating">Sort by rating</string>
     <string name="no_network">No internet connection</string>
     <string name="action_retry">Retry</string>
+    <string name="trailer_heading">Trailers:</string>
+    <string name="review_heading">Reviews:</string>
 
 </resources>
