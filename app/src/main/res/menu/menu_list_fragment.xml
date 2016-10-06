@@ -14,4 +14,10 @@
         android:title="@string/menu_sort_rating"
         android:checkable="true"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/sortByFavorite"
+        android:orderInCategory="200"
+        android:title="@string/menu_sort_favorite"
+        android:checkable="true"
+        app:showAsAction="never" />
 </menu>

@@ -16,6 +16,7 @@
 
     <string name="menu_sort_popularity">Sort by popularity</string>
     <string name="menu_sort_rating">Sort by rating</string>
+    <string name="menu_sort_favorite">Favorites</string>
     <string name="no_network">No internet connection</string>
     <string name="action_retry">Retry</string>
     <string name="trailer_heading">Trailers:</string>

@@ -227,8 +227,11 @@ public class MoviesFragment extends Fragment {
         String sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
         MenuItem menuPopular = menu.findItem(R.id.sortByPopularity);
         MenuItem menuRating = menu.findItem(R.id.sortByRating);
+        MenuItem menuFavorite = menu.findItem(R.id.sortByFavorite);
+
         if(sortQuery.equals(getString(R.string.popular_url_query))) {
             menuRating.setChecked(false);
+            menuFavorite.setChecked(false);
             menuPopular.setChecked(true);
         } else {
             menuPopular.setChecked(false);

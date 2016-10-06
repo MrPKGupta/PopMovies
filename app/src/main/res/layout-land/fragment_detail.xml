@@ -58,16 +58,32 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     tools:text="8.0/10.0" />
 
-                <TextView
-                    android:id="@+id/tvSynopsis"
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/fragment_detail_padding_top"
-                    tools:text="synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg" />
+                    android:src="@android:drawable/btn_star"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/bottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/fragment_detail_padding_left"
+            android:paddingRight="@dimen/fragment_detail_padding_right"
+            android:orientation="vertical">
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSynopsis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/fragment_detail_padding_top"
+            tools:text="synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg" />
+
+
+    </LinearLayout>
 </ScrollView>
