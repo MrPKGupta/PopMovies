@@ -70,6 +70,7 @@ public class MoviesFragment extends Fragment {
             MovieDataSource movieDataSource = new MovieDataSource(movieDbHelper);
             JSONArray movieList = movieDataSource.readItems();
             if(movieList.length() > 0) {
+                movieListAdapter.setDataLoaded(true);
                 createImageUrlList(movieList);
             } else {
                 showSnackBar();
@@ -82,12 +83,6 @@ public class MoviesFragment extends Fragment {
             fetchTask.execute(sortQuery);
         }
 
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -101,6 +96,13 @@ public class MoviesFragment extends Fragment {
                 }
             }
         });
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override

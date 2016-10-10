@@ -1,6 +1,7 @@
 package addtotech.com.popmovies;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public class MovieListAdapter extends ArrayAdapter<String>{
     private static final String LOG_TAG = MovieListAdapter.class.getSimpleName();
+    private boolean isDataLoaded;
 
 
     public MovieListAdapter(Context context, List<String> list) {
@@ -29,8 +31,13 @@ public class MovieListAdapter extends ArrayAdapter<String>{
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_image, parent, false);
         }
-
-        String url = getContext().getString(R.string.poster_base_url) + getItem(position);
+        String url;
+        if(isDataLoaded) {
+            url = Environment.getExternalStorageDirectory().getPath();
+        } else {
+            url = getContext().getString(R.string.poster_base_url);
+        }
+        url += getItem(position);
         final ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
 
@@ -48,5 +55,9 @@ public class MovieListAdapter extends ArrayAdapter<String>{
                 .resize(screenWidthPixels, 0)
                 .into(imageView);
         return convertView;
+    }
+
+    public void setDataLoaded(boolean status) {
+        isDataLoaded = status;
     }
 }
