@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -107,8 +106,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.checkFavorite:
                 try {
-                    File file = new File(Environment.getExternalStorageDirectory().getPath()
-                            + "/" + movieItem.getString(ARG_PARAM_POSTER_URL));
+                    File file = new File(getContext().getFilesDir(), movieItem.getString(ARG_PARAM_POSTER_URL));
                     if (isFavorite) {
                         movieDataSource.deleteItem(movieId);
                         file.delete();
@@ -118,7 +116,6 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                                 .show();
                     } else if (movieItem != null) {
                         try {
-                            file.createNewFile();
                             FileOutputStream oStream = new FileOutputStream(file);
                             currentBitmap.compress(Bitmap.CompressFormat.JPEG, 75, oStream);
                             oStream.close();
@@ -185,8 +182,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
                 if (posterUrl != null && !posterUrl.equals("")) {
                     if (isFavorite) {
-                        String path = Environment.getExternalStorageDirectory().getPath()
-                                + "/" + posterUrl;
+                        String path = "file:" + getContext().getFilesDir().getAbsolutePath() + posterUrl;
                         Picasso.with(getContext())
                                 .load(path)
                                 .placeholder(R.drawable.placeholder)

@@ -1,7 +1,6 @@
 package addtotech.com.popmovies;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,7 @@ public class MovieListAdapter extends ArrayAdapter<String>{
         }
         String url;
         if(isDataLoaded) {
-            url = Environment.getExternalStorageDirectory().getPath();
+            url = "file:" + getContext().getFilesDir().getAbsolutePath();
         } else {
             url = getContext().getString(R.string.poster_base_url);
         }

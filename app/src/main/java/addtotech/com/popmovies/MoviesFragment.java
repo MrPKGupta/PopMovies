@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,10 +69,10 @@ public class MoviesFragment extends Fragment {
         if(!Utils.isNetworkAvailable(getActivity())) {
             MovieDbHelper movieDbHelper = MovieDbHelper.getInstance(getActivity());
             MovieDataSource movieDataSource = new MovieDataSource(movieDbHelper);
-            JSONArray movieList = movieDataSource.readItems();
-            if(movieList.length() > 0) {
+            results = movieDataSource.readItems();
+            if(results.length() > 0) {
                 movieListAdapter.setDataLoaded(true);
-                createImageUrlList(movieList);
+                createImageUrlList(results);
             } else {
                 showSnackBar();
             }
@@ -230,7 +231,7 @@ public class MoviesFragment extends Fragment {
             }
 
             //Setting list adapter to gridView
-            movieListAdapter.notifyDataSetChanged();
+             movieListAdapter.notifyDataSetChanged();
 
             if(getResources().getBoolean(R.bool.has_two_panes) && !imageUrlList.isEmpty()) {
                 gridView.performItemClick(movieListAdapter.getView(0, null, null), 0, movieListAdapter.getItemId(0));
@@ -254,9 +255,14 @@ public class MoviesFragment extends Fragment {
             menuRating.setChecked(false);
             menuFavorite.setChecked(false);
             menuPopular.setChecked(true);
+        } else if(sortQuery.equals(getString(R.string.rating_url_query))){
+            menuPopular.setChecked(false);
+            menuFavorite.setChecked(false);
+            menuRating.setChecked(true);
         } else {
             menuPopular.setChecked(false);
-            menuRating.setChecked(true);
+            menuRating.setChecked(false);
+            menuFavorite.setChecked(true);
         }
     }
 
@@ -265,21 +271,35 @@ public class MoviesFragment extends Fragment {
         int id = item.getItemId();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        if(id == R.id.sortByPopularity) {
-            sortQuery = getString(R.string.popular_url_query);
-            new FetchImageTask().execute(sortQuery);
-            editor.putString(MainActivity.SORT_QUERY, sortQuery);
-            editor.apply();
-            getActivity().supportInvalidateOptionsMenu();
-            return true;
-        }
-        if(id == R.id.sortByRating) {
-            sortQuery = getString(R.string.rating_url_query);
-            new FetchImageTask().execute(sortQuery);
-            editor.putString(MainActivity.SORT_QUERY, sortQuery);
-            editor.apply();
-            getActivity().supportInvalidateOptionsMenu();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.sortByPopularity:
+                sortQuery = getString(R.string.popular_url_query);
+                new FetchImageTask().execute(sortQuery);
+                editor.putString(MainActivity.SORT_QUERY, sortQuery);
+                editor.apply();
+                getActivity().supportInvalidateOptionsMenu();
+                return true;
+
+            case R.id.sortByRating:
+                sortQuery = getString(R.string.rating_url_query);
+                new FetchImageTask().execute(sortQuery);
+                editor.putString(MainActivity.SORT_QUERY, sortQuery);
+                editor.apply();
+                getActivity().supportInvalidateOptionsMenu();
+                return true;
+
+            case R.id.sortByFavorite:
+                MovieDbHelper movieDbHelper = MovieDbHelper.getInstance(getActivity());
+                MovieDataSource movieDataSource = new MovieDataSource(movieDbHelper);
+                results = movieDataSource.readItems();
+                if(results.length() > 0) {
+                    movieListAdapter.setDataLoaded(true);
+                    createImageUrlList(results);
+                } else {
+                    Toast.makeText(getActivity(), "NO movie in the favorite list.", Toast.LENGTH_SHORT).show();
+                }
+                getActivity().supportInvalidateOptionsMenu();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
