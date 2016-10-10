@@ -31,7 +31,7 @@ public class MovieListAdapter extends ArrayAdapter<String>{
         }
 
         String url = getContext().getString(R.string.poster_base_url) + getItem(position);
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
+        final ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
 
         //int minSize = Utils.convertToPx(getContext(), (int)getContext().getResources().getDimension(R.dimen.imageview_min_size));
@@ -41,7 +41,10 @@ public class MovieListAdapter extends ArrayAdapter<String>{
         } else {
             screenWidthPixels = displayMetrics.widthPixels /2;
         }
-        Picasso.with(getContext()).load(url)
+
+        Picasso.with(getContext())
+                .load(url)
+                .placeholder(R.drawable.placeholder)
                 .resize(screenWidthPixels, 0)
                 .into(imageView);
         return convertView;

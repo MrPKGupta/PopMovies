@@ -58,11 +58,12 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     tools:text="8.0/10.0" />
 
-                <ImageView
+                <CheckBox
+                    android:id="@+id/checkFavorite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/fragment_detail_padding_top"
-                    android:src="@android:drawable/btn_star"/>
+                    android:button="@android:drawable/btn_star" />
 
             </LinearLayout>
 

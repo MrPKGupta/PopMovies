@@ -65,11 +65,22 @@ public class MoviesFragment extends Fragment {
 
         gridView.setAdapter(movieListAdapter);
 
-        //Load the movies by popularity or rating
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
-        fetchTask = new FetchImageTask();
-        fetchTask.execute(sortQuery);
+        if(!Utils.isNetworkAvailable(getActivity())) {
+            MovieDbHelper movieDbHelper = MovieDbHelper.getInstance(getActivity());
+            MovieDataSource movieDataSource = new MovieDataSource(movieDbHelper);
+            JSONArray movieList = movieDataSource.readItems();
+            if(movieList.length() > 0) {
+                createImageUrlList(movieList);
+            } else {
+                showSnackBar();
+            }
+        } else {
+            //Load the movies by popularity or rating
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
+            fetchTask = new FetchImageTask();
+            fetchTask.execute(sortQuery);
+        }
 
         return view;
     }
@@ -138,7 +149,7 @@ public class MoviesFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... strings) {
-            Log.d(LOG_TAG, "inbackground called");
+            Log.d(LOG_TAG, "in background called");
             HttpURLConnection httpURLConnection = null;
             BufferedReader reader = null;
             String api_key = getString(R.string.api_key);
@@ -197,26 +208,34 @@ public class MoviesFragment extends Fragment {
             //Getting the list of image urls to be passed to the list adapter
             if(string == null || string.isEmpty())
                 return;
-            imageUrlList.clear();
             try {
                 JSONObject jsonObject = new JSONObject(string);
                 results = jsonObject.getJSONArray("results");
-                for(int i=0; i<results.length(); i++) {
-                    JSONObject object = results.getJSONObject(i);
-                    String posterPath = object.getString("poster_path");
-                    imageUrlList.add(posterPath);
-                }
-
-                //Setting list adapter to gridView
-                movieListAdapter.notifyDataSetChanged();
-
-                if(getResources().getBoolean(R.bool.has_two_panes) && !imageUrlList.isEmpty()) {
-                    gridView.performItemClick(movieListAdapter.getView(0, null, null), 0, movieListAdapter.getItemId(0));
-                }
-
-            } catch (JSONException e) {
+                createImageUrlList(results);
+            } catch(JSONException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void createImageUrlList(JSONArray results) {
+        imageUrlList.clear();
+        try {
+            for(int i=0; i<results.length(); i++) {
+                JSONObject object = results.getJSONObject(i);
+                String posterPath = object.getString("poster_path");
+                imageUrlList.add(posterPath);
+            }
+
+            //Setting list adapter to gridView
+            movieListAdapter.notifyDataSetChanged();
+
+            if(getResources().getBoolean(R.bool.has_two_panes) && !imageUrlList.isEmpty()) {
+                gridView.performItemClick(movieListAdapter.getView(0, null, null), 0, movieListAdapter.getItemId(0));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
