@@ -23,5 +23,6 @@
     <string name="review_heading">Reviews:</string>
     <string name="favorite_add">Marked as favorite.</string>
     <string name="favorite_remove">Removed from favorites.</string>
+    <string name="share_chooser_title">Share Trailer</string>
 
 </resources>

@@ -39,6 +39,9 @@ import java.util.ArrayList;
  */
 public class MoviesFragment extends Fragment {
     private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
+
+    //Identifier for selection of favorites list
+    private static final String SORT_QUERY_FAV = "favorite";
     private FetchImageTask fetchTask = null;
     private JSONArray results;
     private ArrayList<String> imageUrlList = new ArrayList<>();
@@ -55,6 +58,9 @@ public class MoviesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         movieListAdapter = new MovieListAdapter(getActivity(), imageUrlList);
+        //Load the movies by popularity or rating
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
         setHasOptionsMenu(true);
     }
 
@@ -77,20 +83,21 @@ public class MoviesFragment extends Fragment {
                 showSnackBar();
             }
         } else {
-            //Load the movies by popularity or rating
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
+            if(sortQuery.equals(SORT_QUERY_FAV)) {
+                sortQuery = getString(R.string.popular_url_query);
+                movieListAdapter.setDataLoaded(false);
+            }
             fetchTask = new FetchImageTask();
             fetchTask.execute(sortQuery);
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 if(onMovieSelectedListener != null) {
                     try {
-                        JSONObject movie = results.getJSONObject(i);
-                        onMovieSelectedListener.onMovieSelected(movie.toString());
+                        JSONObject movie = results.getJSONObject(position);
+                        onMovieSelectedListener.onMovieSelected(movie.toString(), position);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -233,8 +240,12 @@ public class MoviesFragment extends Fragment {
             //Setting list adapter to gridView
              movieListAdapter.notifyDataSetChanged();
 
-            if(getResources().getBoolean(R.bool.has_two_panes) && !imageUrlList.isEmpty()) {
-                gridView.performItemClick(movieListAdapter.getView(0, null, null), 0, movieListAdapter.getItemId(0));
+            if(!imageUrlList.isEmpty()) {
+                gridView.smoothScrollToPosition(MainActivity.mSelectIndex);
+
+                if(getResources().getBoolean(R.bool.has_two_panes)){
+                    gridView.performItemClick(movieListAdapter.getView(MainActivity.mSelectIndex, null, null), MainActivity.mSelectIndex, movieListAdapter.getItemId(MainActivity.mSelectIndex));
+                }
             }
 
         } catch (JSONException e) {
@@ -245,8 +256,6 @@ public class MoviesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list_fragment, menu);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortQuery = sharedPreferences.getString(MainActivity.SORT_QUERY, getString(R.string.popular_url_query));
         MenuItem menuPopular = menu.findItem(R.id.sortByPopularity);
         MenuItem menuRating = menu.findItem(R.id.sortByRating);
         MenuItem menuFavorite = menu.findItem(R.id.sortByFavorite);
@@ -274,6 +283,11 @@ public class MoviesFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.sortByPopularity:
                 sortQuery = getString(R.string.popular_url_query);
+                movieListAdapter.setDataLoaded(false);
+
+                //Reset the movie selection
+                MainActivity.mSelectIndex = 0;
+
                 new FetchImageTask().execute(sortQuery);
                 editor.putString(MainActivity.SORT_QUERY, sortQuery);
                 editor.apply();
@@ -282,6 +296,11 @@ public class MoviesFragment extends Fragment {
 
             case R.id.sortByRating:
                 sortQuery = getString(R.string.rating_url_query);
+                movieListAdapter.setDataLoaded(false);
+
+                //Reset the movie selection
+                MainActivity.mSelectIndex = 0;
+
                 new FetchImageTask().execute(sortQuery);
                 editor.putString(MainActivity.SORT_QUERY, sortQuery);
                 editor.apply();
@@ -289,6 +308,14 @@ public class MoviesFragment extends Fragment {
                 return true;
 
             case R.id.sortByFavorite:
+                sortQuery = SORT_QUERY_FAV;
+                editor.putString(MainActivity.SORT_QUERY, sortQuery);
+                editor.apply();
+                getActivity().supportInvalidateOptionsMenu();
+
+                //Reset the movie selection
+                MainActivity.mSelectIndex = 0;
+
                 MovieDbHelper movieDbHelper = MovieDbHelper.getInstance(getActivity());
                 MovieDataSource movieDataSource = new MovieDataSource(movieDbHelper);
                 results = movieDataSource.readItems();
@@ -298,14 +325,13 @@ public class MoviesFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "NO movie in the favorite list.", Toast.LENGTH_SHORT).show();
                 }
-                getActivity().supportInvalidateOptionsMenu();
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public interface OnMovieSelectedListener {
-        void onMovieSelected(String movie);
+        void onMovieSelected(String movie, int position);
     }
 
     private void showSnackBar() {

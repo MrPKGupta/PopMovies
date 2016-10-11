@@ -16,8 +16,9 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity implements MoviesFragment.OnMovieSelectedListener {
 
     public static final String SORT_QUERY = "sort_query";
+    private static final String SELECTION_INDEX = "selection_index";
 
-    int mSelectIndex = 0;
+    public static int mSelectIndex = 0;
 
     //Whether or not we are in dual-pane mode
     boolean mIsDualPane;
@@ -53,9 +54,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     void restoreSelection(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (mIsDualPane) {
-                mSelectIndex = savedInstanceState.getInt("selectIndex", 0);
-                //moviesFragment.setSelection(mSelectIndex);
-                //onMovieSelected(mSelectIndex);
+                mSelectIndex = savedInstanceState.getInt(SELECTION_INDEX, 0);
             }
         }
     }
@@ -67,13 +66,13 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("selectIndex", mSelectIndex);
+        outState.putInt(SELECTION_INDEX, mSelectIndex);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onMovieSelected(String movie) {
-       // mSelectIndex = index;
+    public void onMovieSelected(String movie, int position) {
+        mSelectIndex = position;
         if(mIsDualPane) {
             detailFragment.displayMovie(movie);
         } else {

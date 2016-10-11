@@ -78,7 +78,16 @@
             tools:text="synopsis agjiaugio aghjakghjakl aklghakl hadkjfha haklghag agjhakgh ahgkalghal hgalghal hahgagh aklghalgh alghalgh alghalgha aghaklghalg lhaghalgh alghlagha alghalgh aglhaghalgha ghlag aghaglahg ahga aghaklghalg ahgal ;lahglaghalgh aghalgha glahg" />
 
         <LinearLayout
-            android:id="@+id/bottomLayout"
+            android:id="@+id/trailerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/fragment_detail_padding_left"
+            android:paddingRight="@dimen/fragment_detail_padding_right"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/reviewLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/fragment_detail_padding_left"

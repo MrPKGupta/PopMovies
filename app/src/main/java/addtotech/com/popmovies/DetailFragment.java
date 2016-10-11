@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,7 +52,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     private TextView tvRelease;
     private ImageView poster;
     private CheckBox checkFavorite;
-    private LinearLayout bottomLayout;
+    private LinearLayout reviewLayout;
+    private LinearLayout trailerLayout;
 
     private boolean mIsDualPane;
     private String movieId;
@@ -91,7 +93,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         tvRelease = (TextView) view.findViewById(R.id.tvReleaseDate);
         poster = (ImageView) view.findViewById(R.id.imageViewThumbNail);
         checkFavorite = (CheckBox) view.findViewById(R.id.checkFavorite);
-        bottomLayout = (LinearLayout) view.findViewById(R.id.bottomLayout);
+        reviewLayout = (LinearLayout) view.findViewById(R.id.reviewLayout);
+        trailerLayout = (LinearLayout) view.findViewById(R.id.trailerLayout);
 
         checkFavorite.setOnClickListener(this);
 
@@ -160,6 +163,9 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                 if (movieDataSource.checkItem(movieId)) {
                     isFavorite = true;
                     checkFavorite.setChecked(true);
+                } else {
+                    isFavorite = false;
+                    checkFavorite.setChecked(false);
                 }
 
                 Target target = new Target() {
@@ -315,13 +321,16 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                 JSONArray results = jsonObject.getJSONArray("results");
                 count = results.length();
 
+                //Remove the review added from the last set of data
+                reviewLayout.removeAllViews();
+
                 //Adding row separator
                 View separatorView = new View(getContext());
                 separatorView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                         Utils.convertToPx(getContext(), 1));
                 separatorView.setLayoutParams(layoutParams);
-                bottomLayout.addView(separatorView);
+                reviewLayout.addView(separatorView);
 
                 //Adding review heading
                 LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -329,7 +338,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                 TextView reviewHeadingTextView = new TextView(getContext());
                 reviewHeadingTextView.setLayoutParams(layoutParams1);
                 reviewHeadingTextView.setText(R.string.review_heading);
-                bottomLayout.addView(reviewHeadingTextView);
+                reviewLayout.addView(reviewHeadingTextView);
 
                 //Adding review list
                 for (int i = 0; i < count; i++) {
@@ -342,7 +351,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     TextView reviewTextView = (TextView) view.findViewById(R.id.tvReview);
                     authorTextView.setText(authorName);
                     reviewTextView.setText(reviewText);
-                    bottomLayout.addView(view);
+                    reviewLayout.addView(view);
                 }
 
 
@@ -438,13 +447,16 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                 JSONArray results = jsonObject.getJSONArray("results");
                 count = results.length();
 
+                //Remove the trailer added from the last set of data
+                trailerLayout.removeAllViews();
+
                 //Adding row separator
                 View separatorView = new View(getContext());
                 separatorView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                         Utils.convertToPx(getContext(), 1));
                 separatorView.setLayoutParams(layoutParams);
-                bottomLayout.addView(separatorView);
+                trailerLayout.addView(separatorView);
 
                 //Adding trailer heading
                 LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -452,7 +464,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                 TextView trailerTextView = new TextView(getContext());
                 trailerTextView.setLayoutParams(layoutParams1);
                 trailerTextView.setText(R.string.trailer_heading);
-                bottomLayout.addView(trailerTextView);
+                trailerLayout.addView(trailerTextView);
 
                 //Adding trailers list
                 for (int i = 1; i <= count; i++) {
@@ -460,25 +472,45 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     final String trailerUrlKey = object.getString("key");
                     View view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_trailer, null);
                     ImageView trailerImageView = (ImageView) view.findViewById(R.id.imageViewThumbNail);
-                    trailerImageView.setOnClickListener(new View.OnClickListener() {
+                    TextView titleTextView = (TextView) view.findViewById(R.id.tvTrailerTitle);
+                    ImageButton shareButton = (ImageButton) view.findViewById(R.id.shareBtn);
+
+                    titleTextView.setText("Trailer " + i);
+
+                    String url = getContext().getString(R.string.trailer_thumbnail_base_url) + trailerUrlKey +
+                            getContext().getString(R.string.trailer_thumbnail_query);
+
+                    Picasso.with(getContext()).load(url)
+                            //.resize(screenWidthPixels, 0)
+                            //.placeholder(R.drawable.placeholder)
+                            .into(trailerImageView);
+
+                    View.OnClickListener onClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Uri uri = Uri.parse(getString(R.string.youtube_base_url) + trailerUrlKey);
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_VIEW);
-                            intent.setData(uri);
-                            startActivity(intent);
+                            switch (view.getId()) {
+                                case R.id.imageViewThumbNail:
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_VIEW);
+                                    intent.setData(uri);
+                                    startActivity(intent);
+                                    break;
+                                case R.id.shareBtn:
+                                    Intent shareIntent = new Intent();
+                                    shareIntent.setAction(Intent.ACTION_SEND);
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, uri.toString());
+                                    shareIntent.setType("text/plain");
+                                    startActivity(Intent.createChooser(shareIntent, getText(R.string.share_chooser_title)));
+                                    break;
+                            }
                         }
-                    });
-                    TextView titleTextView = (TextView) view.findViewById(R.id.tvTrailerTitle);
-                    titleTextView.setText("Trailer " + i);
-                    String url = getContext().getString(R.string.trailer_thumbnail_base_url) + trailerUrlKey +
-                            getContext().getString(R.string.trailer_thumbnail_query);
-                    Picasso.with(getContext()).load(url)
-                            //.resize(screenWidthPixels, 0)
-                            .placeholder(R.drawable.placeholder)
-                            .into(trailerImageView);
-                    bottomLayout.addView(view);
+                    };
+
+                    trailerImageView.setOnClickListener(onClickListener);
+                    shareButton.setOnClickListener(onClickListener);
+
+                    trailerLayout.addView(view);
                 }
 
             } catch (JSONException e) {
